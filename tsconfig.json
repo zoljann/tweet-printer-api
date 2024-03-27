@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+        "target": "es2016",
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "allowSyntheticDefaultImports": true
+    }
+}
