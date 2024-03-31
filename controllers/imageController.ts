@@ -1,15 +1,42 @@
 import { createCanvas, loadImage } from 'canvas';
 import { Product, ProductColor, ProductPrintSide } from '../interface';
+import { Rettiwt } from 'rettiwt-api';
 
 export const generateProductImagePreview = async (req: any, res: any) => {
+  const rettiwt = new Rettiwt();
   const { product, tweetUrl, color, side } = req.query;
 
   console.log(product, tweetUrl, color, side);
 
-  //potrazi tweetUrl na apiju ako ne nadjes vrati nie dobar u try catch isto
-
   let imageUrl = '';
   let productPrice;
+  let tweetData = {
+    username: '',
+    fullName: '',
+    content: '',
+    retweetCount: 0,
+    likeCount: 0,
+  };
+
+  try {
+    const tweetDetails = await rettiwt.tweet.details(
+      extractTweetIdFromUrl(tweetUrl)
+    );
+    tweetData.username = tweetDetails.tweetBy.userName;
+    tweetData.fullName = tweetDetails.tweetBy.fullName;
+    tweetData.content = tweetDetails.fullText.replace(/\n/g, '');
+    tweetData.retweetCount = tweetDetails.retweetCount;
+    tweetData.likeCount = tweetDetails.likeCount;
+
+    console.log(tweetData);
+  } catch (error) {
+    console.log('Error fetching tweet details:', error);
+    res
+      .status(500)
+      .json({ error: 'Link tvita koji si proslijedio nije validan' });
+
+    return;
+  }
 
   if (product === Product.SHIRT) {
     productPrice = 35;
@@ -44,19 +71,18 @@ export const generateProductImagePreview = async (req: any, res: any) => {
     ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 
     // Na majici
-    const externalImage = await loadImage('https://i.imgur.com/IlWwkq3.jpg');
-
-    // Calculate text width
-    const x = (canvas.width - externalImage.width) / 2;
-    const y = (canvas.height - externalImage.height) / 2;
-
-    ctx.drawImage(externalImage, x, y);
 
     const buffer = canvas.toBuffer();
 
     res.json({ image: buffer.toString('base64'), pricePreview: productPrice });
   } catch (error) {
     console.error('Error generating image:', error);
-    res.status(500).json({ error: 'Error while generating image' });
+    res.status(500).json({ error: 'Greška prilikom kreiranja majice' });
   }
+};
+
+const extractTweetIdFromUrl = (tweetUrl: any) => {
+  const match = tweetUrl.match(/\/(\d+)$/);
+
+  return match ? match[1] : null;
 };
