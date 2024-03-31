@@ -2,15 +2,16 @@ import * as express from 'express';
 import { Express } from 'express';
 import * as cors from 'cors';
 import { connect } from 'mongoose';
-import order from './controllers/order';
-import image from './controllers/image';
+import imageRoute from './routes/imageRoute';
+import orderRoute from './routes/orderRoute';
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors());
-app.use('/order', order); 
-app.use('/image', image); 
+
+app.use('/order', orderRoute);
+app.use('/image', imageRoute);
 
 connect('mongodb://127.0.0.1:27017')
   .then(() => {

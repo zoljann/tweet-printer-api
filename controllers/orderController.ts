@@ -1,7 +1,4 @@
-import { Router } from 'express';
 import { Schema, model } from 'mongoose';
-
-const router = Router();
 
 interface IOrder {
   name: string;
@@ -17,11 +14,11 @@ const orderSchema = new Schema<IOrder>({
 
 const Order = model<IOrder>('Order', orderSchema);
 
-router.get('/get-all', function (req, res) {
+export const getAllOrders = async (req: any, res: any) => {
   res.json({ id: 1, product: 'Product 1', quantity: 5 });
-});
+};
 
-router.post('/create', function (req, res) {
+export const createOrder = async (req: any, res: any) => {
   const newOrder = new Order({
     name: req.body.name,
     mobileNumber: req.body.mobileNumber,
@@ -29,6 +26,4 @@ router.post('/create', function (req, res) {
   });
 
   console.log(newOrder);
-});
-
-export default router;
+};
