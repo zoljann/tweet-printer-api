@@ -65,6 +65,37 @@ export const generateProductImageUrl = (
   }
 };
 
+export const calculateTweetImagePosition = (
+  canvas: any,
+  tweetImage: any,
+  product: Product
+) => {
+  let tweetImageX = 162;
+  let tweetImageY = 188;
+  let tweetImageWidth = canvas.width;
+  let tweetImageHeight =
+    tweetImage.height * (tweetImageWidth / tweetImage.width);
+
+  if (product === Product.SHIRT) {
+    tweetImageX = 162;
+    tweetImageY = 188;
+    tweetImageWidth = canvas.width;
+    tweetImageHeight = tweetImage.height * (tweetImageWidth / tweetImage.width);
+  } else if (product === Product.MUG) {
+    tweetImageX = 95;
+    tweetImageY = 190;
+    tweetImageWidth = canvas.width * 0.9;
+    tweetImageHeight = tweetImage.height * (tweetImageWidth / tweetImage.width);
+  }
+
+  return {
+    tweetImageWidth,
+    tweetImageHeight,
+    tweetImageX,
+    tweetImageY,
+  };
+};
+
 export const createHtmlFromTweetData = (
   tweetData: ITweetData,
   productColor: ProductColor

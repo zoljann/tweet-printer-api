@@ -5,6 +5,7 @@ import {
   generateTweetImageBuffer,
   generateProductImageUrl,
   generateProductPrice,
+  calculateTweetImagePosition,
 } from '../helpers';
 
 export const generateProductImagePreview = async (req: any, res: any) => {
@@ -22,8 +23,6 @@ export const generateProductImagePreview = async (req: any, res: any) => {
     likeCount: (Math.random() * (3.0 - 1.0) + 1.0).toFixed(2),
     commentCount: Math.floor(Math.random() * (60 - 10 + 1)) + 10,
   };
-
-  console.log(product, tweetUrl, color, side);
 
   try {
     const tweetDetails = await rettiwt.tweet.details(
@@ -56,7 +55,7 @@ export const generateProductImagePreview = async (req: any, res: any) => {
     ctx.drawImage(productImage, 0, 0, canvas.width, canvas.height);
 
     const { tweetImageWidth, tweetImageHeight, tweetImageX, tweetImageY } =
-      calculateTweetImagePosition(canvas, tweetImage);
+      calculateTweetImagePosition(canvas, tweetImage, product);
 
     ctx.drawImage(
       tweetImage,
@@ -66,29 +65,12 @@ export const generateProductImagePreview = async (req: any, res: any) => {
       tweetImageHeight
     );
 
-    const buffer = canvas.toBuffer();
-
     res.json({
-      image: buffer.toString('base64'),
+      image: canvas.toBuffer().toString('base64'),
       pricePreview: productPrice,
     });
   } catch (error) {
     console.error('Error generating image:', error);
     res.status(500).json({ error: 'Greška prilikom kreiranja majice' });
   }
-};
-
-const calculateTweetImagePosition = (canvas: any, tweetImage: any) => {
-  const tweetImageX = 162;
-  const tweetImageY = 188;
-  const tweetImageWidth = canvas.width;
-  const tweetImageHeight =
-    tweetImage.height * (tweetImageWidth / tweetImage.width);
-
-  return {
-    tweetImageWidth,
-    tweetImageHeight,
-    tweetImageX,
-    tweetImageY,
-  };
 };
