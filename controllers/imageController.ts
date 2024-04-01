@@ -6,6 +6,7 @@ import {
   generateProductImageUrl,
   generateProductPrice,
   calculateTweetImagePosition,
+  formatTweetDataContent,
 } from '../helpers';
 
 export const generateProductImagePreview = async (req: any, res: any) => {
@@ -32,7 +33,7 @@ export const generateProductImagePreview = async (req: any, res: any) => {
     tweetData.userId = tweetDetails.id;
     tweetData.username = tweetDetails.tweetBy.userName;
     tweetData.fullName = tweetDetails.tweetBy.fullName;
-    tweetData.content = tweetDetails.fullText.replace(/\n/g, '');
+    tweetData.content = formatTweetDataContent(tweetDetails.fullText);
   } catch (error) {
     console.log('Error fetching tweet details:', error);
     res
