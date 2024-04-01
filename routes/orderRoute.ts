@@ -4,6 +4,6 @@ import { getAllOrders, createOrder } from '../controllers/orderController';
 const router = Router();
 
 router.get('/get-all', getAllOrders);
-router.get('/create', createOrder);
+router.post('/create', createOrder);
 
 export default router;

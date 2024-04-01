@@ -13,6 +13,16 @@ export enum ProductPrintSide {
   BACK = 'Natpis pozadi',
 }
 
+export interface IOrder {
+  name: string;
+  mobileNumber: string;
+  state: string;
+  city: string;
+  address: string;
+  shipping: string;
+  items: [];
+}
+
 export interface ITweetData {
   userId: string;
   username: string;

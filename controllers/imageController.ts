@@ -1,3 +1,4 @@
+import { Response } from 'express';
 import { createCanvas, loadImage } from 'canvas';
 import { Rettiwt } from 'rettiwt-api';
 import {
@@ -9,7 +10,7 @@ import {
   formatTweetDataContent,
 } from '../helpers';
 
-export const generateProductImagePreview = async (req: any, res: any) => {
+export const generateProductImagePreview = async (req: any, res: Response) => {
   const rettiwt = new Rettiwt();
 
   const { product, tweetUrl, color, side } = req.query;

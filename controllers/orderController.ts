@@ -1,29 +1,70 @@
+import { Request, Response } from 'express';
 import { Schema, model } from 'mongoose';
+import { IOrder } from '../interface';
 
-interface IOrder {
-  name: string;
-  mobileNumber: number;
-  items: string;
-}
-
-const orderSchema = new Schema<IOrder>({
-  name: { type: String, required: true },
-  mobileNumber: { type: Number, required: true },
-  items: { type: String, required: true },
-});
+const orderSchema = new Schema<IOrder>(
+  {
+    name: { type: String, required: true },
+    mobileNumber: { type: String, required: true },
+    state: { type: String, required: true },
+    city: { type: String, required: true },
+    address: { type: String, required: true },
+    shipping: { type: String, required: true },
+    items: [],
+  },
+  { versionKey: false }
+);
 
 const Order = model<IOrder>('Order', orderSchema);
 
-export const getAllOrders = async (req: any, res: any) => {
-  res.json({ id: 1, product: 'Product 1', quantity: 5 });
+export const getAllOrders = async (req: Request, res: Response) => {
+  try {
+    const orders = await Order.find();
+
+    res.json(orders);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Neuspješno dohvaćanje narudžbi' });
+  }
 };
 
-export const createOrder = async (req: any, res: any) => {
-  const newOrder = new Order({
-    name: req.body.name,
-    mobileNumber: req.body.mobileNumber,
-    items: req.body.items,
-  });
+export const createOrder = async (req: Request, res: Response) => {
+  const { name, mobileNumber, state, city, address, shipping, items } =
+    req.body;
 
-  console.log(newOrder);
+  if (
+    !name ||
+    !mobileNumber ||
+    !state ||
+    !city ||
+    !address ||
+    !shipping ||
+    !items ||
+    !items.every(
+      (item: any) => 'product' in item && 'color' in item && 'tweetUrl' in item
+    )
+  ) {
+    res.status(500).json({ error: 'Nepotpun unos' });
+
+    return;
+  }
+
+  try {
+    const newOrder = new Order({
+      name,
+      mobileNumber,
+      items,
+      state,
+      city,
+      address,
+      shipping,
+    });
+
+    await newOrder.save();
+
+    res.json({ success: 'Uspješno kreirana narudžba' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Neuspješno kreiranje narudžbe' });
+  }
 };
