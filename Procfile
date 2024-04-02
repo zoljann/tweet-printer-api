@@ -1,1 +1,1 @@
-web: ./node_modules/.bin/tsc && node index.js
+web: npm run build && node index.js
