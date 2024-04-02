@@ -7,6 +7,8 @@ import orderRoute from './routes/orderRoute';
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
+const mongoDbURI =
+  process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/twitterprint';
 
 app.use(cors());
 app.use(express.json());
@@ -14,7 +16,7 @@ app.use(express.json());
 app.use('/order', orderRoute);
 app.use('/image', imageRoute);
 
-connect('mongodb://127.0.0.1:27017/twitterprint')
+connect(mongoDbURI)
   .then(() => {
     console.log('Connected to MongoDB');
     app.listen(port, () => {
