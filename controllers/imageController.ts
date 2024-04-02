@@ -27,26 +27,23 @@ export const generateProductImagePreview = async (req: any, res: Response) => {
   };
 
   try {
-    /*  const tweetDetails = await rettiwt.tweet.details(
+    const tweetDetails = await rettiwt.tweet.details(
       extractTweetIdFromUrl(tweetUrl)
-    ); */
+    );
 
-    tweetData.userId = '1769174257295065099';
-    tweetData.username = 'MicinStojan';
-    tweetData.fullName = 'Stojke Mićin';
-    tweetData.content =
-      'navijem alarm i stavim telefon da se puni kad se probudim ujutro ni telefon se jos nije napunio :/';
+    tweetData.userId = tweetDetails.id;
+    tweetData.username = tweetDetails.tweetBy.userName;
+    tweetData.fullName = tweetDetails.tweetBy.fullName;
+    tweetData.content = formatTweetDataContent(tweetDetails.fullText);
   } catch (error) {
     console.log('Error fetching tweet details:', error);
-    res
-      .status(500)
-      .json({ error: 'Link tvita koji si proslijedio nije validan' });
+    res.status(500).json({ error });
 
     return;
   }
 
   try {
-    const tweetImageBuffer = await generateTweetImageBuffer(tweetData, color); //ovo je najsporije
+    const tweetImageBuffer = await generateTweetImageBuffer(tweetData, color);
     const [productImage, tweetImage] = await Promise.all([
       loadImage(productImageUrl),
       //@ts-ignore
@@ -74,6 +71,6 @@ export const generateProductImagePreview = async (req: any, res: Response) => {
     });
   } catch (error) {
     console.error('Error generating image:', error);
-    res.status(500).json({ error: 'Greška prilikom kreiranja majice' });
+    res.status(500).json({ error });
   }
 };

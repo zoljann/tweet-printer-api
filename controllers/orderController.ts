@@ -68,6 +68,6 @@ export const createOrder = async (req: Request, res: Response) => {
     res.json({ success: 'Uspješno kreirana narudžba' });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: 'Neuspješno kreiranje narudžbe' });
+    res.status(500).json({ error });
   }
 };
