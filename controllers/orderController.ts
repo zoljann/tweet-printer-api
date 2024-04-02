@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Schema, model } from 'mongoose';
 import { IOrder } from '../interface';
+import { calculateTotalPrice } from '../helpers';
 
 const orderSchema = new Schema<IOrder>(
   {
@@ -10,6 +11,7 @@ const orderSchema = new Schema<IOrder>(
     city: { type: String, required: true },
     address: { type: String, required: true },
     shipping: { type: String, required: true },
+    total: { type: Number, required: true },
     items: [],
   },
   { versionKey: false }
@@ -53,11 +55,12 @@ export const createOrder = async (req: Request, res: Response) => {
     const newOrder = new Order({
       name,
       mobileNumber,
-      items,
       state,
       city,
       address,
       shipping,
+      total: calculateTotalPrice(items),
+      items,
     });
 
     await newOrder.save();

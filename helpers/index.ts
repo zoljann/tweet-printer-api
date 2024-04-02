@@ -45,6 +45,17 @@ export const generateProductPrice = (product: Product) => {
   }
 };
 
+export const calculateTotalPrice = (items: any) => {
+  let total = 0;
+
+  items.forEach((item: { product: Product }) => {
+    if (item.product === Product.MUG) total += 20;
+    else if (item.product === Product.SHIRT) total += 45;
+  });
+
+  return total;
+};
+
 export const generateProductImageUrl = (
   product: Product,
   color: ProductColor,
