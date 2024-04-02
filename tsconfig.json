@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "target": "es2020",
-    "forceConsistentCasingInFileNames": true,
+    "module": "commonjs",
     "strict": true,
-    "allowSyntheticDefaultImports": true,
-    "moduleResolution": "node"
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true
   }
 }

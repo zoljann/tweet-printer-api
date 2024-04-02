@@ -1,6 +1,6 @@
-import * as express from 'express';
+import express from 'express';
 import { Express } from 'express';
-import * as cors from 'cors';
+import cors from 'cors';
 import { connect } from 'mongoose';
 import imageRoute from './routes/imageRoute';
 import orderRoute from './routes/orderRoute';
