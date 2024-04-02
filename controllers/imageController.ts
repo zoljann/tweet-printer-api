@@ -27,14 +27,15 @@ export const generateProductImagePreview = async (req: any, res: Response) => {
   };
 
   try {
-    const tweetDetails = await rettiwt.tweet.details(
+    /*  const tweetDetails = await rettiwt.tweet.details(
       extractTweetIdFromUrl(tweetUrl)
-    );
+    ); */
 
-    tweetData.userId = tweetDetails.id;
-    tweetData.username = tweetDetails.tweetBy.userName;
-    tweetData.fullName = tweetDetails.tweetBy.fullName;
-    tweetData.content = formatTweetDataContent(tweetDetails.fullText);
+    tweetData.userId = '1769174257295065099';
+    tweetData.username = 'MicinStojan';
+    tweetData.fullName = 'Stojke Mićin';
+    tweetData.content =
+      'navijem alarm i stavim telefon da se puni kad se probudim ujutro ni telefon se jos nije napunio :/';
   } catch (error) {
     console.log('Error fetching tweet details:', error);
     res

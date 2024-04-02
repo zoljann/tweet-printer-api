@@ -1,9 +1,9 @@
 {
-    "compilerOptions": {
-        "target": "es2016",
-        "forceConsistentCasingInFileNames": true,
-        "strict": true,
-        "allowSyntheticDefaultImports": true,
-        "moduleResolution": "node" 
-    }
+  "compilerOptions": {
+    "target": "es2020",
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node"
+  }
 }
