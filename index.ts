@@ -1,10 +1,10 @@
 import express from 'express';
 import { Express } from 'express';
 import cors from 'cors';
+import { connect } from 'mongoose';
 import imageRoute from './routes/imageRoute';
 import orderRoute from './routes/orderRoute';
 
-const mongoose = require('mongoose');
 const app: Express = express();
 const port = process.env.PORT || 3000;
 const mongoDbURI =
@@ -16,8 +16,7 @@ app.use(express.json());
 app.use('/order', orderRoute);
 app.use('/image', imageRoute);
 
-mongoose
-  .connect(mongoDbURI)
+connect(mongoDbURI)
   .then(() => {
     console.log('Connected to MongoDB');
     app.listen(port, () => {
