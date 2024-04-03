@@ -26,15 +26,18 @@ export async function generateTweetImageBuffer(
   tweetData: ITweetData,
   productColor: ProductColor
 ): Promise<void> {
-  const image = await htmlToImage({
-    html: createHtmlFromTweetData(tweetData, productColor),
-    transparent: true,
-  });
+  try {
+    const image = await htmlToImage({
+      html: createHtmlFromTweetData(tweetData, productColor),
+      transparent: true,
+    });
 
-  // @ts-ignore
-  return image;
+    // @ts-ignore
+    return image;
+  } catch (error: any) {
+    console.log('Error converting html to image:', error?.data || error);
+  }
 }
-
 export const generateProductPrice = (product: Product) => {
   let productPrice;
 
