@@ -11,7 +11,10 @@ import {
 } from '../helpers';
 
 export const generateProductImagePreview = async (req: any, res: Response) => {
-  const rettiwt = new Rettiwt();
+  const rettiwt = new Rettiwt({
+    apiKey:
+      'a2R0PVRTZnFxaWNaTVJPMUJ0OERQQ1RlVVgzUlpQR0ZMcUJ6SjdHOUs2T3A7dHdpZD0idT0xNzc0NDIzNTQ3Mzc4NjEwMTc2IjtjdDA9Mzc5YWIwZDY5YTRjZDZjZDg1NWVmNDJmOGNlNWRkNDQ7YXV0aF90b2tlbj1hZDljNzFiZWZjYjRjYmEzYWFjOGUwODVlY2I3YjhjZWQyYTEwNTE3Ow==',
+  });
 
   const { product, tweetUrl, color, side } = req.query;
   const productImageUrl = generateProductImageUrl(product, color, side) || '';
