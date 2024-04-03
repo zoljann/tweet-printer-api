@@ -28,16 +28,12 @@ export async function generateTweetImageBuffer(
 ): Promise<void> {
   const puppeteer = {
     args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-accelerated-2d-canvas',
-      '--no-first-run',
-      '--headless',
-      '--no-zygote',
-      '--disable-gpu',
+      `--no-sandbox`,
+      `--headless`,
+      `--disable-gpu`,
+      `--disable-dev-shm-usage`,
     ],
-    headless: true,
+    headless: 'new',
     ignoreHTTPSErrors: true,
   };
 
