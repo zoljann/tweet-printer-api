@@ -26,10 +26,26 @@ export async function generateTweetImageBuffer(
   tweetData: ITweetData,
   productColor: ProductColor
 ): Promise<void> {
+  const puppeteer = {
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-accelerated-2d-canvas',
+      '--no-first-run',
+      '--headless',
+      '--no-zygote',
+      '--disable-gpu',
+    ],
+    headless: true,
+    ignoreHTTPSErrors: true,
+  };
+
   try {
     const image = await htmlToImage({
       html: createHtmlFromTweetData(tweetData, productColor),
       transparent: true,
+      puppeteerArgs: puppeteer,
     });
 
     // @ts-ignore
