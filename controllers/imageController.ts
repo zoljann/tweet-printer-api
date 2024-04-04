@@ -11,10 +11,13 @@ import {
 } from '../helpers';
 
 export const generateProductImagePreview = async (req: any, res: Response) => {
+  let retried = false;
+  const rettiwtApiKey = retried
+    ? process.env.TW_API_KEY_V2
+    : process.env.TW_API_KEY_V1;
   const rettiwt = new Rettiwt({
-    apiKey: process.env.TW_API_KEY_V1,
+    apiKey: rettiwtApiKey,
   });
-
   const { product, tweetUrl, color, side } = req.query;
   const productImageUrl = generateProductImageUrl(product, color, side) || '';
   const productPrice = generateProductPrice(product);
@@ -38,10 +41,14 @@ export const generateProductImagePreview = async (req: any, res: Response) => {
     tweetData.fullName = tweetDetails.tweetBy.fullName;
     tweetData.content = formatTweetDataContent(tweetDetails.fullText);
   } catch (error: any) {
-    console.log('Error fetching tweet details:', error?.data || error);
-    res.status(500).json({ error });
+    if (!retried) {
+      retried = true;
 
-    return;
+      return generateProductImagePreview(req, res);
+    } else {
+      console.log('Error fetching tweet details:', error?.data || error);
+      res.status(500).json({ error });
+    }
   }
 
   try {
