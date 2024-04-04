@@ -5,6 +5,7 @@
   "scripts": {
     "start": "nodemon index.ts",
     "postinstall": "tsc && npx puppeteer browsers install chrome",
+    "heroku-postbuild": "mkdir ./.cache && mv /app/.cache/puppeteer ./.cache",
     "watch-node": "nodemon dist/index.js",
     "watch-ts": "tsc -w"
   },
