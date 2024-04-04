@@ -12,8 +12,7 @@ import {
 
 export const generateProductImagePreview = async (req: any, res: Response) => {
   const rettiwt = new Rettiwt({
-    apiKey:
-      'a2R0PVRTZnFxaWNaTVJPMUJ0OERQQ1RlVVgzUlpQR0ZMcUJ6SjdHOUs2T3A7dHdpZD0idT0xNzc0NDIzNTQ3Mzc4NjEwMTc2IjtjdDA9Mzc5YWIwZDY5YTRjZDZjZDg1NWVmNDJmOGNlNWRkNDQ7YXV0aF90b2tlbj1hZDljNzFiZWZjYjRjYmEzYWFjOGUwODVlY2I3YjhjZWQyYTEwNTE3Ow==',
+    apiKey: process.env.TW_API_KEY_V1,
   });
 
   const { product, tweetUrl, color, side } = req.query;

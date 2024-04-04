@@ -1,14 +1,15 @@
 import express from 'express';
 import { Express } from 'express';
 import cors from 'cors';
+import dotenv from 'dotenv';
 import { connect } from 'mongoose';
 import imageRoute from './routes/imageRoute';
 import orderRoute from './routes/orderRoute';
 
+dotenv.config();
 const app: Express = express();
-const port = process.env.PORT || 3000;
-const mongoDbURI =
-  process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/twitterprint';
+const port = process.env.PORT;
+const mongoDbURI = process.env.MONGODB_URI;
 
 app.use(cors());
 app.use(express.json());
