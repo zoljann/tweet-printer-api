@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "nodemon index.ts",
-    "postinstall": "tsc",
+    "postinstall": "tsc && node node_modules/puppeteer/install.mjs && npm install puppeteer-core && npx puppeteer browsers install chrome",
     "watch-node": "nodemon dist/index.js",
     "watch-ts": "tsc -w"
   },
