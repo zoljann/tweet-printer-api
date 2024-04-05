@@ -9,6 +9,7 @@ import {
   calculateTweetImagePosition,
   formatTweetDataContent,
 } from '../helpers';
+import { ITweetData } from '../interface';
 
 export const generateProductImagePreview = async (req: any, res: Response) => {
   let retried = false;
@@ -21,11 +22,11 @@ export const generateProductImagePreview = async (req: any, res: Response) => {
   const { product, tweetUrl, color, side } = req.query;
   const productImageUrl = generateProductImageUrl(product, color, side) || '';
   const productPrice = generateProductPrice(product);
-  let tweetData = {
-    userId: '',
+  let tweetData: ITweetData = {
     username: '',
     fullName: '',
     content: '',
+    profileImage: '',
     retweetCount: Math.floor(Math.random() * (150 - 50 + 1)) + 50,
     likeCount: (Math.random() * (3.0 - 1.0) + 1.0).toFixed(2),
     commentCount: Math.floor(Math.random() * (60 - 10 + 1)) + 10,
@@ -36,10 +37,10 @@ export const generateProductImagePreview = async (req: any, res: Response) => {
       extractTweetIdFromUrl(tweetUrl)
     );
 
-    tweetData.userId = tweetDetails.id;
     tweetData.username = tweetDetails.tweetBy.userName;
     tweetData.fullName = tweetDetails.tweetBy.fullName;
     tweetData.content = formatTweetDataContent(tweetDetails.fullText);
+    tweetData.profileImage = tweetDetails.tweetBy.profileImage;
   } catch (error: any) {
     if (!retried) {
       retried = true;

@@ -137,7 +137,7 @@ export const createHtmlFromTweetData = (
   const htmlContent = `
     <div class="tweet-wrap" style="color: ${textColor};">
       <div class="tweet-header">
-        <img src="https://unavatar.io/twitter/${tweetData.username}" class="avatar"/>
+        <img src="${tweetData.profileImage}" class="avatar"/>
         <div class="tweet-header-info">
           <span>${tweetData.fullName}</span>
           <div>@${tweetData.username}</div>

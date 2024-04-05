@@ -25,10 +25,10 @@ export interface IOrder {
 }
 
 export interface ITweetData {
-  userId: string;
   username: string;
   fullName: string;
   content: string;
+  profileImage: string;
   retweetCount: number;
   likeCount: string;
   commentCount: number;
