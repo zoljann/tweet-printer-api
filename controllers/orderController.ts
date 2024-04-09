@@ -1,8 +1,11 @@
 import { Request, Response } from 'express';
 import { Schema, model } from 'mongoose';
 import { IOrder } from '../interface';
-import { calculateTotalPrice } from '../helpers';
-import { transporter } from '../index';
+import {
+  calculateTotalPrice,
+  sendConfirmationMail,
+  sendConfirmationMailToEmployee,
+} from '../helpers';
 
 const orderSchema = new Schema<IOrder>(
   {
@@ -69,14 +72,25 @@ export const createOrder = async (req: Request, res: Response) => {
 
     res.json({ success: 'Uspješno kreirana narudžba' });
 
+    sendConfirmationMailToEmployee(
+      items,
+      name,
+      mobileNumber,
+      state,
+      city,
+      address
+    );
+
     if (email) {
-      await transporter.sendMail({
-        from: 'isprintajsvojtvit@gmail.com',
-        to: email,
-        subject: 'Potvrda narudžbe - @isprintajsvojtvit',
-        text: 'saljemo vam potvrdu narudzbe',
-        html: '<b>sta ovo bold</b> </br> radil novi red da nastavim ovdje',
-      });
+      sendConfirmationMail(
+        email,
+        items,
+        name,
+        mobileNumber,
+        state,
+        city,
+        address
+      );
     }
   } catch (error) {
     console.log(error);

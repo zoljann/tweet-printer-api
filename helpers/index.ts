@@ -1,4 +1,5 @@
 import htmlToImage from 'node-html-to-image';
+import { transporter } from '../index';
 import {
   Product,
   ProductColor,
@@ -226,4 +227,146 @@ export const createHtmlFromTweetData = (
     }`;
 
   return `<style>${cssStyles}</style>${htmlContent}`;
+};
+
+export const formatProductName = (product: Product) => {
+  switch (product) {
+    case Product.SHIRT:
+      return 'Majica';
+    case Product.MUG:
+      return 'Šolja';
+  }
+};
+
+export const formatColorName = (color: ProductColor) => {
+  switch (color) {
+    case ProductColor.BLACK:
+      return 'Crna';
+    case ProductColor.WHITE:
+      return 'Bijela';
+  }
+};
+
+export const sendConfirmationMail = async (
+  email: string,
+  items: any,
+  name: string,
+  mobileNumber: string,
+  state: string,
+  city: string,
+  address: string
+) => {
+  const itemListHTML = items
+    .map(
+      (item: any) =>
+        `<li>1x <strong>${formatProductName(
+          item.product
+        )}</strong> - ${formatColorName(item.color)}  ${
+          item.product !== 'mug'
+            ? `, ${item.printSide}, veličina ${item.size}`
+            : ''
+        }, tweet: ${item.tweetUrl}`
+    )
+    .join('');
+
+  await transporter.sendMail({
+    from: 'isprintajsvojtvit@gmail.com',
+    to: email,
+    subject: 'Potvrda narudžbe - @isprintajsvojtvit',
+    text: 'Potvrda narudžbe',
+    html: `<!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+    <body>
+      <h2 style="color: #007bff">Potvrda narudžbe</h2>
+      <div>Dragi/a ${name},</div>
+      <div>
+        Vaša narudžba je uspješno primljena i u procesu obrade. Detalji:
+      </div>
+      <ul>
+        ${itemListHTML}
+      </ul>
+      <span
+        >Ukupna cijena:
+        <span style="color: tomato">${calculateTotalPrice(items)}KM</span></span
+      >
+      <p>Adresa na koju šaljemo:</p>
+      <ul>
+        <li>${name}</li>
+        <li>${mobileNumber}</li>
+        <li>${state}, ${city}, ${address}</li>
+      </ul>
+      <p>
+        Ukoliko bilo što od ovoga nije tačno molimo te da nam odgovoriš na ovaj
+        mail ili kontaktiraš na instagramu
+        <a
+          style="color: tomato"
+          href="https://www.instagram.com/isprintajsvojtvit"
+          target="_blank"
+          >@isprintajsvojtvit</a
+        >.
+      </p>
+      <div>Srdačan pozdrav,</div>
+      <div>@isprintajsvojtvit team</div>
+    </body>
+  </html>
+  `,
+  });
+};
+
+export const sendConfirmationMailToEmployee = async (
+  items: any,
+  name: string,
+  mobileNumber: string,
+  state: string,
+  city: string,
+  address: string
+) => {
+  const itemListHTML = items
+    .map(
+      (item: any) =>
+        `<li>1x <strong>${formatProductName(
+          item.product
+        )}</strong> - ${formatColorName(item.color)}  ${
+          item.product !== 'mug'
+            ? `, ${item.printSide}, veličina ${item.size}`
+            : ''
+        }, tweet: ${item.tweetUrl}`
+    )
+    .join('');
+
+  await transporter.sendMail({
+    from: 'isprintajsvojtvit@gmail.com',
+    to: 'isprintajsvojtvit@gmail.com',
+    subject: 'Pristigla narudžba',
+    text: 'Pristigla narudžba',
+    html: `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+    <body>
+      <h2 style="color: tomato">Pristigla narudžba</h2>
+      <div>Naručeno:</div>
+      <ul>
+        ${itemListHTML}
+      </ul>
+      <span
+        >Ukupna cijena:
+        <span style="color: tomato">${calculateTotalPrice(items)}KM</span></span
+      >
+      <p>Adresa na koju šaljemo:</p>
+      <ul>
+        <li>${name}</li>
+        <li>${mobileNumber}</li>
+        <li>${state}, ${city}, ${address}</li>
+      </ul>
+    </body>
+  </html>
+  `,
+  });
 };
