@@ -1,11 +1,7 @@
 import { Request, Response } from 'express';
 import { Schema, model } from 'mongoose';
 import { IOrder } from '../interface';
-import {
-  calculateTotalPrice,
-  sendConfirmationMail,
-  sendConfirmationMailToEmployee,
-} from '../helpers';
+import { calculateTotalPrice, sendConfirmationMail } from '../helpers';
 
 const orderSchema = new Schema<IOrder>(
   {
@@ -46,6 +42,7 @@ export const createOrder = async (req: Request, res: Response) => {
     !city ||
     !address ||
     !shipping ||
+    !email ||
     !items ||
     !items.every(
       (item: any) => 'product' in item && 'color' in item && 'tweetUrl' in item
@@ -72,7 +69,8 @@ export const createOrder = async (req: Request, res: Response) => {
 
     res.json({ success: 'Uspješno kreirana narudžba' });
 
-    sendConfirmationMailToEmployee(
+    sendConfirmationMail(
+      email,
       items,
       name,
       mobileNumber,
@@ -80,18 +78,6 @@ export const createOrder = async (req: Request, res: Response) => {
       city,
       address
     );
-
-    if (email) {
-      sendConfirmationMail(
-        email,
-        items,
-        name,
-        mobileNumber,
-        state,
-        city,
-        address
-      );
-    }
   } catch (error) {
     console.log(error);
     res.status(500).json({ error });
