@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { Schema, model } from 'mongoose';
 import { IOrder } from '../interface';
 import { calculateTotalPrice } from '../helpers';
+import { transporter } from '../index';
 
 const orderSchema = new Schema<IOrder>(
   {
@@ -11,6 +12,7 @@ const orderSchema = new Schema<IOrder>(
     city: { type: String, required: true },
     address: { type: String, required: true },
     shipping: { type: String, required: true },
+    email: { type: String, required: false },
     total: { type: Number, required: true },
     items: [],
   },
@@ -31,7 +33,7 @@ export const getAllOrders = async (req: Request, res: Response) => {
 };
 
 export const createOrder = async (req: Request, res: Response) => {
-  const { name, mobileNumber, state, city, address, shipping, items } =
+  const { name, mobileNumber, state, city, address, shipping, email, items } =
     req.body;
 
   if (
@@ -66,6 +68,16 @@ export const createOrder = async (req: Request, res: Response) => {
     await newOrder.save();
 
     res.json({ success: 'Uspješno kreirana narudžba' });
+
+    if (email) {
+      await transporter.sendMail({
+        from: 'isprintajsvojtvit@gmail.com',
+        to: email,
+        subject: 'Potvrda narudžbe - @isprintajsvojtvit',
+        text: 'saljemo vam potvrdu narudzbe',
+        html: '<b>sta ovo bold</b> </br> radil novi red da nastavim ovdje',
+      });
+    }
   } catch (error) {
     console.log(error);
     res.status(500).json({ error });

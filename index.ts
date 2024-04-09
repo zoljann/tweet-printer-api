@@ -1,4 +1,5 @@
 import express from 'express';
+import nodemailer from 'nodemailer';
 import { Express } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -10,6 +11,7 @@ dotenv.config();
 const app: Express = express();
 const port = process.env.PORT;
 const mongoDbURI = process.env.MONGODB_URI;
+let transporter;
 
 app.use(cors());
 app.use(express.json());
@@ -20,6 +22,18 @@ app.use('/image', imageRoute);
 connect(mongoDbURI)
   .then(() => {
     console.log('Connected to MongoDB');
+
+    transporter = nodemailer.createTransport({
+      service: 'Gmail',
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.NODEMAILER_USER,
+        pass: process.env.NODEMAILER_PASS,
+      },
+    });
+
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`);
     });
@@ -27,3 +41,5 @@ connect(mongoDbURI)
   .catch((error: string) => {
     console.error('Failed to connect to MongoDB:', error);
   });
+
+export { transporter };

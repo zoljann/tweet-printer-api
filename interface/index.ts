@@ -20,6 +20,7 @@ export interface IOrder {
   city: string;
   address: string;
   shipping: string;
+  email: string;
   total: number;
   items: [];
 }
