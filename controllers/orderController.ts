@@ -1,7 +1,11 @@
 import { Request, Response } from 'express';
 import { Schema, model } from 'mongoose';
 import { IOrder } from '../interface';
-import { calculateTotalPrice, sendConfirmationMail } from '../helpers';
+import {
+  calculateTotalPrice,
+  sendConfirmationMail,
+  sendConfirmationMailToEmployee,
+} from '../helpers';
 
 const orderSchema = new Schema<IOrder>(
   {
@@ -71,6 +75,16 @@ export const createOrder = async (req: Request, res: Response) => {
 
     sendConfirmationMail(
       email,
+      items,
+      name,
+      mobileNumber,
+      state,
+      city,
+      address
+    );
+
+    sendConfirmationMailToEmployee(
+      'isprintajsvojtvit@gmail.com',
       items,
       name,
       mobileNumber,

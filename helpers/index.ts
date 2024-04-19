@@ -38,6 +38,10 @@ export async function generateTweetImageBuffer(
           `--disable-gpu`,
           `--disable-dev-shm-usage`,
         ],
+        defaultViewport: {
+          width: 335,
+          height: 300,
+        },
       },
     });
 
@@ -103,21 +107,21 @@ export const calculateTweetImagePosition = (
   tweetImage: any,
   product: Product
 ) => {
-  let tweetImageX = 162;
+  let tweetImageX = 135;
   let tweetImageY = 188;
   let tweetImageWidth = canvas.width;
   let tweetImageHeight =
     tweetImage.height * (tweetImageWidth / tweetImage.width);
 
   if (product === Product.SHIRT) {
-    tweetImageX = 162;
+    tweetImageX = 155;
     tweetImageY = 188;
-    tweetImageWidth = canvas.width;
+    tweetImageWidth = canvas.width / 1.95;
     tweetImageHeight = tweetImage.height * (tweetImageWidth / tweetImage.width);
   } else if (product === Product.MUG) {
-    tweetImageX = 95;
-    tweetImageY = 190;
-    tweetImageWidth = canvas.width * 0.9;
+    tweetImageX = 82;
+    tweetImageY = 185;
+    tweetImageWidth = canvas.width * 0.5;
     tweetImageHeight = tweetImage.height * (tweetImageWidth / tweetImage.width);
   }
 
@@ -290,8 +294,10 @@ export const sendConfirmationMail = async (
         ${itemListHTML}
       </ul>
       <span
-        >Ukupna cijena:
-        <span style="color: tomato">${calculateTotalPrice(items)}KM</span></span
+        >Ukupna cijena sa dostavom:
+        <span style="color: tomato"><strong>${calculateTotalPrice(
+          items
+        )}KM</strong></span></span
       >
       <p>Adresa na koju šaljemo:</p>
       <ul>
@@ -311,6 +317,65 @@ export const sendConfirmationMail = async (
       </p>
       <div>Srdačan pozdrav,</div>
       <div>@isprintajsvojtvit team</div>
+    </body>
+  </html>
+  `,
+  });
+};
+
+export const sendConfirmationMailToEmployee = async (
+  email: string,
+  items: any,
+  name: string,
+  mobileNumber: string,
+  state: string,
+  city: string,
+  address: string
+) => {
+  const itemListHTML = items
+    .map(
+      (item: any) =>
+        `<li>1x <strong>${formatProductName(
+          item.product
+        )}</strong> - ${formatColorName(item.color)}  ${
+          item.product !== 'mug'
+            ? `, ${item.printSide}, veličina ${item.size}`
+            : ''
+        }, tweet: ${item.tweetUrl}, base64: ${item.tweetImageBase64}`
+    )
+    .join('');
+
+  await transporter.sendMail({
+    from: 'isprintajsvojtvit@gmail.com',
+    to: email,
+    subject: 'Pristigla narudžba',
+    text: 'Pristigla narudžba',
+    html: `<!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+    <body>
+      <h2 style="color: #007bff">Pristigla narudžba</h2>
+      <div>
+       Zaprimljena je narudžba. Detalji:
+      </div>
+      <ul>
+        ${itemListHTML}
+      </ul>
+      <span
+        >Ukupna cijena sa dostavom:
+        <span style="color: tomato"><strong>${calculateTotalPrice(
+          items
+        )}KM</strong></span></span
+      >
+      <p>Adresa na koju se šalje:</p>
+      <ul>
+        <li>${name}</li>
+        <li>${mobileNumber}</li>
+        <li>${state}, ${city}, ${address}</li>
+      </ul>
     </body>
   </html>
   `,

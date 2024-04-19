@@ -77,6 +77,8 @@ export const generateProductImagePreview = async (req: any, res: Response) => {
 
     res.json({
       image: canvas.toBuffer().toString('base64'),
+      //@ts-ignore
+      tweetImageBase64: tweetImageBuffer.toString('base64'),
       pricePreview: productPrice,
     });
   } catch (error: any) {
