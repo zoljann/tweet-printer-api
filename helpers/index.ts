@@ -39,7 +39,7 @@ export async function generateTweetImageBuffer(
           `--disable-dev-shm-usage`,
         ],
         defaultViewport: {
-          width: 335,
+          width: 400,
           height: 300,
         },
       },
@@ -119,9 +119,9 @@ export const calculateTweetImagePosition = (
     tweetImageWidth = canvas.width / 1.95;
     tweetImageHeight = tweetImage.height * (tweetImageWidth / tweetImage.width);
   } else if (product === Product.MUG) {
-    tweetImageX = 82;
+    tweetImageX = 85;
     tweetImageY = 185;
-    tweetImageWidth = canvas.width * 0.5;
+    tweetImageWidth = canvas.width * 0.45;
     tweetImageHeight = tweetImage.height * (tweetImageWidth / tweetImage.width);
   }
 
@@ -341,7 +341,7 @@ export const sendConfirmationMailToEmployee = async (
           item.product !== 'mug'
             ? `, ${item.printSide}, veličina ${item.size}`
             : ''
-        }, tweet: ${item.tweetUrl}, base64: ${item.tweetImageBase64}`
+        }, tweet: ${item.tweetUrl}, base64: ${item.tweetImageBase64}</li><br>`
     )
     .join('');
 
