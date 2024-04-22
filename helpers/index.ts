@@ -329,9 +329,9 @@ export const sendConfirmationMail = async (
       >
       <p>Adresa na koju šaljemo:</p>
       <ul>
-        <li>${name}</li>
-        <li>${mobileNumber}</li>
-        <li>${state}, ${city}, ${address}</li>
+        <li>Ime i prezime: ${name}</li>
+        <li>Broj mobitela: ${mobileNumber}</li>
+        <li>Adresa: ${state}, ${city}, ${address}</li>
       </ul>
       <p>
         Ukoliko bilo što od ovoga nije tačno molimo te da nam odgovoriš na ovaj
@@ -400,9 +400,9 @@ export const sendConfirmationMailToEmployee = async (
       >
       <p>Adresa na koju se šalje:</p>
       <ul>
-        <li>${name}</li>
-        <li>${mobileNumber}</li>
-        <li>${state}, ${city}, ${address}</li>
+        <li>Ime i prezime: ${name}</li>
+        <li>Broj mobitela: ${mobileNumber}</li>
+        <li>Adresa: ${state}, ${city}, ${address}</li>
       </ul>
     </body>
   </html>
