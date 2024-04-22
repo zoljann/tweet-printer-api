@@ -28,6 +28,7 @@ export interface IOrder {
 export interface ITweetData {
   username: string;
   fullName: string;
+  createdAt: string;
   content: string;
   profileImage: string;
   retweetCount: number;

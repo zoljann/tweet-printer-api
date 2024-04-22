@@ -8,6 +8,7 @@ import {
   generateProductPrice,
   calculateTweetImagePosition,
   formatTweetDataContent,
+  formatCreatedAtDate,
 } from '../helpers';
 import { ITweetData } from '../interface';
 
@@ -25,6 +26,7 @@ export const generateProductImagePreview = async (req: any, res: Response) => {
   let tweetData: ITweetData = {
     username: '',
     fullName: '',
+    createdAt: '',
     content: '',
     profileImage: '',
     retweetCount: Math.floor(Math.random() * (150 - 50 + 1)) + 50,
@@ -39,6 +41,7 @@ export const generateProductImagePreview = async (req: any, res: Response) => {
 
     tweetData.username = tweetDetails.tweetBy.userName;
     tweetData.fullName = tweetDetails.tweetBy.fullName;
+    tweetData.createdAt = formatCreatedAtDate(tweetDetails.createdAt);
     tweetData.content = formatTweetDataContent(tweetDetails.fullText);
     tweetData.profileImage = tweetDetails.tweetBy.profileImage;
   } catch (error: any) {
