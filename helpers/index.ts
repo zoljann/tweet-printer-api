@@ -15,7 +15,10 @@ export const extractTweetIdFromUrl = (tweetUrl: any) => {
 };
 
 export const formatTweetDataContent = (content: string) => {
-  const formattedContent = content.replace(
+  const emojiRegex =
+    /[\u{1F600}-\u{1F64F}|\u{1F300}-\u{1F5FF}|\u{1F680}-\u{1F6FF}|\u{2600}-\u{26FF}|\u{2700}-\u{27BF}]/gu;
+  const stringWithoutEmojis = content.replace(emojiRegex, '');
+  const formattedContent = stringWithoutEmojis.replace(
     /(?:@[^\s]+)|(?:https?:\/\/\S+)|(?:http?:\/\/\S+)/g,
     ''
   );
@@ -183,13 +186,7 @@ export const createHtmlFromTweetData = (
           <svg class="feather feather-heart sc-dnqmqq jxshSx" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
           </svg>
-          <div class="likes-count">${tweetData.likeCount}k</div>
-        </div>
-        <div class="message">
-          <svg class="feather feather-send sc-dnqmqq jxshSx" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <line x1="22" y1="2" x2="11" y2="13"></line>
-            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-          </svg>
+          <div class="likes-count">${tweetData.likeCount}K</div>
         </div>
       </div>
     </div>`;
@@ -236,11 +233,12 @@ export const createHtmlFromTweetData = (
   .retweet-count,
   .likes-count {
     font-size: 14px;
+    opacity: 0.8;
   }
   .follow-button {
     position: absolute;
     right: 0;
-    margin-right: 1.5rem;
+    margin-right: 0.5rem;
     border: none;
     outline: none;
     padding: 5px 12px;
