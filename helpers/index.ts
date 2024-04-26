@@ -129,12 +129,12 @@ export const calculateTweetImagePosition = (
     tweetImage.height * (tweetImageWidth / tweetImage.width);
 
   if (product === Product.SHIRT) {
-    tweetImageX = 155;
+    tweetImageX = 165;
     tweetImageY = 188;
     tweetImageWidth = canvas.width / 1.95;
     tweetImageHeight = tweetImage.height * (tweetImageWidth / tweetImage.width);
   } else if (product === Product.MUG) {
-    tweetImageX = 85;
+    tweetImageX = 95;
     tweetImageY = 185;
     tweetImageWidth = canvas.width * 0.45;
     tweetImageHeight = tweetImage.height * (tweetImageWidth / tweetImage.width);
@@ -198,7 +198,7 @@ export const createHtmlFromTweetData = (
     margin-right: 15px;
   }
   .tweet-wrap {
-    width: 380px;
+    width: 350px;
     font-family: Arial, Helvetica, sans-serif;
   }
   .tweet-header {
