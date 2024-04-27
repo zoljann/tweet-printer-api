@@ -24,17 +24,6 @@ const orderSchema = new Schema<IOrder>(
 
 const Order = model<IOrder>('Order', orderSchema);
 
-export const getAllOrders = async (req: Request, res: Response) => {
-  try {
-    const orders = await Order.find();
-
-    res.json(orders);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: 'Neuspješno dohvaćanje narudžbi' });
-  }
-};
-
 export const createOrder = async (req: Request, res: Response) => {
   const { name, mobileNumber, state, city, address, shipping, email, items } =
     req.body;

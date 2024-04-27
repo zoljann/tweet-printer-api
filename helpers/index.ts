@@ -7,6 +7,25 @@ import {
   ITweetData,
 } from '../interface';
 
+export const generateProductPrice = (product: Product) => {
+  if (product === Product.SHIRT) {
+    return 30;
+  } else if (product === Product.MUG) {
+    return 20;
+  }
+};
+
+export const calculateTotalPrice = (items: any) => {
+  let total = 0;
+
+  items.forEach((item: { product: Product }) => {
+    if (item.product === Product.MUG) total += 20;
+    else if (item.product === Product.SHIRT) total += 30;
+  });
+
+  return total;
+};
+
 export const extractTweetIdFromUrl = (tweetUrl: any) => {
   const cleanUrl = tweetUrl.split('?')[0];
   const match = cleanUrl.match(/\/(\d+)$/);
@@ -38,6 +57,24 @@ export const formatCreatedAtDate = (dateString: string) => {
   return `${hours}:${minutes} ‧ ${month}/${day}/${year}`;
 };
 
+export const formatProductName = (product: Product) => {
+  switch (product) {
+    case Product.SHIRT:
+      return 'Majica';
+    case Product.MUG:
+      return 'Šolja';
+  }
+};
+
+export const formatColorName = (color: ProductColor) => {
+  switch (color) {
+    case ProductColor.BLACK:
+      return 'Crna';
+    case ProductColor.WHITE:
+      return 'Bijela';
+  }
+};
+
 export async function generateTweetImageBuffer(
   tweetData: ITweetData,
   productColor: ProductColor
@@ -66,53 +103,31 @@ export async function generateTweetImageBuffer(
     console.log('Error converting html to image:', error?.data || error);
   }
 }
-export const generateProductPrice = (product: Product) => {
-  let productPrice;
-
-  if (product === Product.SHIRT) {
-    return (productPrice = 45);
-  } else if (product === Product.MUG) {
-    return (productPrice = 20);
-  }
-};
-
-export const calculateTotalPrice = (items: any) => {
-  let total = 0;
-
-  items.forEach((item: { product: Product }) => {
-    if (item.product === Product.MUG) total += 20;
-    else if (item.product === Product.SHIRT) total += 45;
-  });
-
-  return total;
-};
 
 export const generateProductImageUrl = (
   product: Product,
   color: ProductColor,
   side: ProductPrintSide
 ) => {
-  let productImageUrl;
-
   if (product === Product.SHIRT) {
     if (color === ProductColor.BLACK) {
       if (side === ProductPrintSide.FRONT) {
-        return (productImageUrl = 'https://i.imgur.com/Cp2wyBj.jpg');
+        return 'https://i.imgur.com/Cp2wyBj.jpg';
       } else if (side === ProductPrintSide.BACK) {
-        return (productImageUrl = 'https://i.imgur.com/KyINBpL.jpg');
+        return 'https://i.imgur.com/KyINBpL.jpg';
       }
     } else if (color === ProductColor.WHITE) {
       if (side === ProductPrintSide.FRONT) {
-        return (productImageUrl = 'https://i.imgur.com/YDzuLdB.jpg');
+        return 'https://i.imgur.com/YDzuLdB.jpg';
       } else if (side === ProductPrintSide.BACK) {
-        return (productImageUrl = 'https://i.imgur.com/X10RteB.jpg');
+        return 'https://i.imgur.com/X10RteB.jpg';
       }
     }
   } else if (product === Product.MUG) {
     if (color === ProductColor.BLACK) {
-      return (productImageUrl = 'https://i.imgur.com/8zPfLJT.jpg');
+      return 'https://i.imgur.com/8zPfLJT.jpg';
     } else if (color === ProductColor.WHITE) {
-      return (productImageUrl = 'https://i.imgur.com/oCH9WGT.jpg');
+      return 'https://i.imgur.com/oCH9WGT.jpg';
     }
   }
 };
@@ -122,11 +137,10 @@ export const calculateTweetImagePosition = (
   tweetImage: any,
   product: Product
 ) => {
-  let tweetImageX = 135;
-  let tweetImageY = 188;
-  let tweetImageWidth = canvas.width;
-  let tweetImageHeight =
-    tweetImage.height * (tweetImageWidth / tweetImage.width);
+  let tweetImageX;
+  let tweetImageY;
+  let tweetImageWidth;
+  let tweetImageHeight;
 
   if (product === Product.SHIRT) {
     tweetImageX = 165;
@@ -257,24 +271,6 @@ export const createHtmlFromTweetData = (
   }`;
 
   return `<style>${cssStyles}</style>${htmlContent}`;
-};
-
-export const formatProductName = (product: Product) => {
-  switch (product) {
-    case Product.SHIRT:
-      return 'Majica';
-    case Product.MUG:
-      return 'Šolja';
-  }
-};
-
-export const formatColorName = (color: ProductColor) => {
-  switch (color) {
-    case ProductColor.BLACK:
-      return 'Crna';
-    case ProductColor.WHITE:
-      return 'Bijela';
-  }
 };
 
 export const sendConfirmationMail = async (
