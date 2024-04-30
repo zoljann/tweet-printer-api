@@ -10,7 +10,7 @@ import {
 
 export const generateProductPrice = (product: Product) => {
   if (product === Product.SHIRT) {
-    return 30;
+    return 25;
   } else if (product === Product.MUG) {
     return 20;
   }
@@ -21,10 +21,10 @@ export const calculateTotalPrice = (items: any) => {
 
   items.forEach((item: { product: Product }) => {
     if (item.product === Product.MUG) total += 20;
-    else if (item.product === Product.SHIRT) total += 30;
+    else if (item.product === Product.SHIRT) total += 25;
   });
 
-  return total;
+  return total + 5;
 };
 
 export const extractTweetIdFromUrl = (tweetUrl: any) => {
@@ -42,8 +42,9 @@ export const formatTweetDataContent = (content: string) => {
     /(?:@[^\s]+)|(?:https?:\/\/\S+)|(?:http?:\/\/\S+)/g,
     ''
   );
+  const contentWithLineBreaks = formattedContent.replace(/\n/g, '<br>');
 
-  return formattedContent.trim();
+  return contentWithLineBreaks.trim();
 };
 
 export const formatCreatedAtDate = (dateString: string) => {
@@ -231,6 +232,7 @@ export const createHtmlFromTweetData = (
   .tweet-header-content {
     margin-top: 10px;
     margin-bottom: 0;
+    white-space: pre-line;
   }
   .tweet-info-counts {
     display: flex;
