@@ -1,5 +1,6 @@
 import htmlToImage from 'node-html-to-image';
 import { transporter } from '../index';
+import { Readable } from 'stream';
 import {
   Product,
   ProductColor,
@@ -354,16 +355,32 @@ export const sendConfirmationMailToEmployee = async (
   city: string,
   address: string
 ) => {
+  const attachments = [];
+
+  items.forEach((item: any, index: number) => {
+    const imageStream = new Readable();
+    imageStream.push(Buffer.from(item.tweetImageBase64, 'base64'));
+    imageStream.push(null);
+
+    attachments.push({
+      filename: `image_${index}.png`,
+      content: imageStream,
+      cid: `image_${index}`,
+    });
+  });
+
   const itemListHTML = items
     .map(
-      (item: any) =>
+      (item: any, index: number) =>
         `<li>1x <strong>${formatProductName(
           item.product
         )}</strong> - ${formatColorName(item.color)}  ${
           item.product !== 'mug'
             ? `, ${item.printSide}, veličina ${item.size}`
             : ''
-        }, tweet: ${item.tweetUrl}, base64: ${item.tweetImageBase64}</li><br>`
+        }, tweet: ${
+          item.tweetUrl
+        }, slika:</li><br><img src="cid:image_${index}" alt="Tweet Image">`
     )
     .join('');
 
@@ -401,5 +418,6 @@ export const sendConfirmationMailToEmployee = async (
     </body>
   </html>
   `,
+    attachments: attachments,
   });
 };
