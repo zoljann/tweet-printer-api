@@ -16,15 +16,16 @@ export const generateProductPrice = (product: Product) => {
   }
 };
 
-export const calculateTotalPrice = (items: any) => {
+export const calculateTotalPrice = (items: any, state: string) => {
   let total = 0;
+  const shipping = state === 'BiH' ? 5 : 15;
 
   items.forEach((item: { product: Product }) => {
     if (item.product === Product.MUG) total += 20;
     else if (item.product === Product.SHIRT) total += 25;
   });
 
-  return total + 5;
+  return total + shipping;
 };
 
 export const extractTweetIdFromUrl = (tweetUrl: any) => {
@@ -321,7 +322,8 @@ export const sendConfirmationMail = async (
       <span
         >Ukupna cijena sa dostavom:
         <span style="color: tomato"><strong>${calculateTotalPrice(
-          items
+          items,
+          state
         )}KM</strong></span></span
       >
       <p>Adresa na koju šaljemo:</p>
@@ -408,7 +410,8 @@ export const sendConfirmationMailToEmployee = async (
       <span
         >Ukupna cijena sa dostavom:
         <span style="color: tomato"><strong>${calculateTotalPrice(
-          items
+          items,
+          state
         )}KM</strong></span></span
       >
       <p>Adresa na koju se šalje:</p>
@@ -422,4 +425,222 @@ export const sendConfirmationMailToEmployee = async (
   `,
     attachments: attachments,
   });
+};
+
+export const sendConfirmationMailPaypal = async (
+  email: string,
+  items: any,
+  name: string,
+  mobileNumber: string,
+  state: string,
+  city: string,
+  address: string
+) => {
+  const itemListHTML = items
+    .map(
+      (item: any) =>
+        `<li>1x <strong>${formatProductName(
+          item.product
+        )}</strong> - ${formatColorName(item.color)}  ${
+          item.product !== 'mug'
+            ? `, ${item.printSide}, veličina ${item.size}`
+            : ''
+        }, tweet: ${item.tweetUrl}`
+    )
+    .join('');
+
+  await transporter.sendMail({
+    from: 'isprintajsvojtvit@gmail.com',
+    to: email,
+    subject: 'Potvrda narudžbe - @isprintajsvojtvit',
+    text: 'Potvrda narudžbe',
+    html: `<!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+    <body>
+      <h2 style="color: #007bff">Potvrda narudžbe</h2>
+      <div>Dragi/a ${name},</div>
+      <div>
+        Vaša narudžba je primljena i uspješno plaćena. Detalji:
+      </div>
+      <ul>
+        ${itemListHTML}
+      </ul>
+      <span
+        >Plaćeni iznos:
+        <span style="color: tomato"><strong>${calculateTotalPrice(
+          items,
+          state
+        )}KM</strong></span></span
+      >
+      <p>Adresa na koju šaljemo:</p>
+      <ul>
+        <li>Ime i prezime: ${name}</li>
+        <li>Broj mobitela: ${mobileNumber}</li>
+        <li>Adresa: ${state}, ${city}, ${address}</li>
+      </ul>
+      <p>
+        Ukoliko bilo što od ovoga nije tačno molimo te da nam odgovoriš na ovaj
+        mail ili kontaktiraš na instagramu
+        <a
+          style="color: tomato"
+          href="https://www.instagram.com/isprintajsvojtvit"
+          target="_blank"
+          >@isprintajsvojtvit</a
+        >.
+      </p>
+      <div>Srdačan pozdrav,</div>
+      <div>@isprintajsvojtvit team</div>
+    </body>
+  </html>
+  `,
+  });
+};
+
+export const sendConfirmationMailToEmployeePaypal = async (
+  email: string,
+  items: any,
+  name: string,
+  mobileNumber: string,
+  state: string,
+  city: string,
+  address: string,
+  status: string,
+  id: any
+) => {
+  const attachments = [];
+
+  items.forEach((item: any, index: number) => {
+    const imageStream = new Readable();
+    imageStream.push(Buffer.from(item.tweetImageBase64, 'base64'));
+    imageStream.push(null);
+
+    attachments.push({
+      filename: `image_${index}.png`,
+      content: imageStream,
+      cid: `image_${index}`,
+    });
+  });
+
+  const itemListHTML = items
+    .map(
+      (item: any, index: number) =>
+        `<li>1x <strong>${formatProductName(
+          item.product
+        )}</strong> - ${formatColorName(item.color)}  ${
+          item.product !== 'mug'
+            ? `, ${item.printSide}, veličina ${item.size}`
+            : ''
+        }, tweet: ${
+          item.tweetUrl
+        }, slika:</li><br><img src="cid:image_${index}" alt="Tweet Image">`
+    )
+    .join('');
+
+  await transporter.sendMail({
+    from: 'isprintajsvojtvit@gmail.com',
+    to: email,
+    subject: 'Pristigla narudžba',
+    text: 'Pristigla narudžba',
+    html: `<!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+    <body>
+      <h2 style="color: #007bff">Pristigla narudžba</h2>
+      <div>
+       Zaprimljena je narudžba koja je plaćena paypalom/karticama. Order id: ${id}, status ${status}. Detalji:
+      </div>
+      <ul>
+        ${itemListHTML}
+      </ul>
+      <span
+        >Plaćeni iznos:
+        <span style="color: tomato"><strong>${calculateTotalPrice(
+          items,
+          state
+        )}KM</strong></span></span
+      >
+      <p>Adresa na koju se šalje:</p>
+      <ul>
+        <li>Ime i prezime: ${name}</li>
+        <li>Broj mobitela: ${mobileNumber}</li>
+        <li>Adresa: ${state}, ${city}, ${address}</li>
+      </ul>
+    </body>
+  </html>
+  `,
+    attachments: attachments,
+  });
+};
+
+export const generatePaypalAccessToken = async () => {
+  try {
+    const auth = Buffer.from(
+      process.env.PAYPAL_CLIENT_ID + ':' + process.env.PAYPAL_CLIENT_SECRET
+    ).toString('base64');
+    const response = await fetch(
+      `${process.env.PAYPAL_BASE_URL}/v1/oauth2/token`,
+      {
+        method: 'POST',
+        body: 'grant_type=client_credentials',
+        headers: {
+          Authorization: `Basic ${auth}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    return data.access_token;
+  } catch (error) {
+    console.error('Failed to generate Paypal access token:', error);
+  }
+};
+
+export const createPaypalOrder = async (totalPrice: any) => {
+  const accessToken = await generatePaypalAccessToken();
+
+  try {
+    const response = await fetch(
+      `${process.env.PAYPAL_BASE_URL}/v2/checkout/orders`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        method: 'POST',
+        body: JSON.stringify({
+          intent: 'CAPTURE',
+          purchase_units: [
+            {
+              amount: {
+                currency_code: 'EUR',
+                value: (totalPrice * 0.53).toFixed(1),
+              },
+            },
+          ],
+          application_context: {
+            shipping_preference: 'NO_SHIPPING',
+          },
+        }),
+      }
+    );
+
+    let res = await response.json();
+
+    if (!res.id) {
+      console.log('Error creating paypal order', res);
+    }
+
+    return { paypalOrderCreated: true, orderId: res.id };
+  } catch (error) {
+    console.log('Error creating paypal order', error.message || error.code);
+    return error;
+  }
 };

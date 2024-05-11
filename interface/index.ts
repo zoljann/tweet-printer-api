@@ -20,6 +20,9 @@ export interface IOrder {
   city: string;
   address: string;
   shipping: string;
+  status: string;
+  payer: object;
+  paypalOrderId: string;
   email: string;
   total: number;
   items: [];
