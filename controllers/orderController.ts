@@ -31,6 +31,44 @@ const orderSchema = new Schema<IOrder>(
 
 const Order = model<IOrder>('Order', orderSchema);
 
+export const getAllOrders = async (req: Request, res: Response) => {
+  try {
+    const orders = await Order.find();
+
+    res.json(orders.reverse());
+  } catch (error) {
+    console.log('Failed to get orders', error);
+    res.status(500).json({ error: 'Neuspješno dohvaćanje narudžbi' });
+  }
+};
+
+export const updateStatusByOrderId = async (req: Request, res: Response) => {
+  const { orderId, status } = req.body;
+
+  if (!['unpaid', 'paid', 'done'].includes(status)) {
+    return res.json({
+      error: 'Status nije validan',
+    });
+  }
+
+  try {
+    const order = await Order.findOne({ _id: orderId });
+
+    if (order) {
+      order.status = status;
+    }
+
+    await order.save();
+
+    res.json({
+      success: `Izmjenjen status narudžbe ID: ${orderId}`,
+    });
+  } catch (error) {
+    console.log('Failed to update order', error);
+    res.json({ error: 'Neuspješno izmjenjivanje statusa narudžbe' });
+  }
+};
+
 export const createOrder = async (req: Request, res: Response) => {
   const { name, mobileNumber, state, city, address, shipping, email, items } =
     req.body;
