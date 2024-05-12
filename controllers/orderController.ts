@@ -157,7 +157,7 @@ export const completePaypalOrder = async (req: Request, res: Response) => {
         await order.save();
 
         res.json({
-          success: 'Narudžba uspješno plaćena, uskoro je na vašoj adresi',
+          success: 'Narudžba je uspješno kreirana',
         });
 
         sendConfirmationMailPaypal(

@@ -18,7 +18,7 @@ export const generateProductPrice = (product: Product) => {
 
 export const calculateTotalPrice = (items: any, state: string) => {
   let total = 0;
-  const shipping = state === 'BiH' ? 5 : 15;
+  const shipping = state === 'BiH' ? 5 : 10;
 
   items.forEach((item: { product: Product }) => {
     if (item.product === Product.MUG) total += 20;
@@ -324,7 +324,9 @@ export const sendConfirmationMail = async (
         <span style="color: tomato"><strong>${calculateTotalPrice(
           items,
           state
-        )}KM</strong></span></span
+        )}KM / ${
+      calculateTotalPrice(items, state) * 0.52
+    }€</strong></span></span
       >
       <p>Adresa na koju šaljemo:</p>
       <ul>
@@ -474,7 +476,9 @@ export const sendConfirmationMailPaypal = async (
         <span style="color: tomato"><strong>${calculateTotalPrice(
           items,
           state
-        )}KM</strong></span></span
+        )}KM / ${
+      calculateTotalPrice(items, state) * 0.52
+    }€</strong></span></span
       >
       <p>Adresa na koju šaljemo:</p>
       <ul>
@@ -621,7 +625,7 @@ export const createPaypalOrder = async (totalPrice: any) => {
             {
               amount: {
                 currency_code: 'EUR',
-                value: (totalPrice * 0.53).toFixed(1),
+                value: (totalPrice * 0.52).toFixed(1),
               },
             },
           ],
