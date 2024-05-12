@@ -133,6 +133,7 @@ export const createOrder = async (req: Request, res: Response) => {
       city,
       address,
       email,
+      status: 'unpaid',
       shipping,
       total: calculateTotalPrice(items, state),
       items,
