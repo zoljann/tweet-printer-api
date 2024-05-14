@@ -476,9 +476,9 @@ export const sendConfirmationMailPaypal = async (
         <span style="color: tomato"><strong>${calculateTotalPrice(
           items,
           state
-        )}KM / ${
-      calculateTotalPrice(items, state) * 0.52
-    }€</strong></span></span
+        )}KM / ${(calculateTotalPrice(items, state) * 0.52).toFixed(
+      2
+    )}€</strong></span></span
       >
       <p>Adresa na koju šaljemo:</p>
       <ul>
