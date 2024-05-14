@@ -8,7 +8,6 @@ import {
   sendConfirmationMail,
   sendConfirmationMailPaypal,
   sendConfirmationMailToEmployee,
-  sendConfirmationMailToEmployeePaypal,
 } from '../helpers';
 
 const orderSchema = new Schema<IOrder>(
@@ -24,6 +23,7 @@ const orderSchema = new Schema<IOrder>(
     paypalOrderId: { type: String, required: false },
     email: { type: String, required: true },
     total: { type: Number, required: true },
+    createdAt: { type: Date, default: Date.now },
     items: [],
   },
   { versionKey: false }
@@ -45,7 +45,7 @@ export const getAllOrders = async (req: Request, res: Response) => {
 export const updateStatusByOrderId = async (req: Request, res: Response) => {
   const { orderId, status } = req.body;
 
-  if (!['unpaid', 'paid', 'done'].includes(status)) {
+  if (!['payinCreated', 'ordered', 'paid', 'done'].includes(status)) {
     return res.json({
       error: 'Status nije validan',
     });
@@ -113,7 +113,7 @@ export const createOrder = async (req: Request, res: Response) => {
           total: calculateTotalPrice(items, state),
           items,
           email,
-          status: 'unpaid',
+          status: 'payinCreated',
           paypalOrderId: orderId,
         });
 
@@ -133,7 +133,7 @@ export const createOrder = async (req: Request, res: Response) => {
       city,
       address,
       email,
-      status: 'unpaid',
+      status: 'ordered',
       shipping,
       total: calculateTotalPrice(items, state),
       items,
@@ -209,16 +209,14 @@ export const completePaypalOrder = async (req: Request, res: Response) => {
           order.address
         );
 
-        sendConfirmationMailToEmployeePaypal(
+        sendConfirmationMailToEmployee(
           'isprintajsvojtvit@gmail.com',
           order.items,
           order.name,
           order.mobileNumber,
           order.state,
           order.city,
-          order.address,
-          order.status,
-          order._id
+          order.address
         );
       }
     } else {
@@ -230,5 +228,24 @@ export const completePaypalOrder = async (req: Request, res: Response) => {
   } catch (error) {
     console.log('Erorr completing paypal order', error.code);
     return { error: true };
+  }
+};
+
+export const cancelPaypalOrder = async (req: Request, res: Response) => {
+  const { paypalOrderId } = req.body;
+
+  try {
+    const result = await Order.deleteOne({ paypalOrderId: paypalOrderId });
+
+    if (result.deletedCount === 1) {
+      res.json({
+        success: `Obrisana paypal narudžba sa IDom: ${paypalOrderId}`,
+      });
+    } else {
+      res.status(404).json({ error: 'Narudžba sa tim IDom nije pronađena' });
+    }
+  } catch (error) {
+    console.log('Erorr canceling paypal order', error.code);
+    res.status(500).json({ error });
   }
 };

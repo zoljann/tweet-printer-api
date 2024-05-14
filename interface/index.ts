@@ -25,6 +25,7 @@ export interface IOrder {
   paypalOrderId: string;
   email: string;
   total: number;
+  createdAt: any;
   items: [];
 }
 
