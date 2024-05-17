@@ -223,7 +223,7 @@ export const completePaypalOrder = async (req: Request, res: Response) => {
       res.json({
         error: 'Plaćanje nije uspješno, pokušaj ponovo',
       });
-      console.log('Completing order error: ', orderId);
+      console.log('Completing order error: ', orderId, 'status:', status);
     }
   } catch (error) {
     console.log('Erorr completing paypal order', error.code);
