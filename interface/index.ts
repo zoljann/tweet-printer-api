@@ -21,6 +21,8 @@ export interface IOrder {
   address: string;
   shipping: string;
   status: string;
+  payer: object;
+  paypalOrderId: string;
   email: string;
   total: number;
   createdAt: any;

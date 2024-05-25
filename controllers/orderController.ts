@@ -3,7 +3,10 @@ import { Schema, model } from 'mongoose';
 import { IOrder } from '../interface';
 import {
   calculateTotalPrice,
+  createPaypalOrder,
+  generatePaypalAccessToken,
   sendConfirmationMail,
+  sendConfirmationMailPaypal,
   sendConfirmationMailToEmployee,
 } from '../helpers';
 
@@ -16,6 +19,8 @@ const orderSchema = new Schema<IOrder>(
     address: { type: String, required: true },
     shipping: { type: String, required: true },
     status: { type: String, required: false },
+    payer: { type: Object, required: false },
+    paypalOrderId: { type: String, required: false },
     email: { type: String, required: true },
     total: { type: Number, required: true },
     createdAt: { type: Date, default: Date.now },
@@ -87,18 +92,38 @@ export const createOrder = async (req: Request, res: Response) => {
   }
 
   try {
-    if (shipping === 'card') {
-      console.log('hendlaj placanje karticama');
-      console.log(req.body);
+    if (shipping === 'paypal') {
+      const { paypalOrderCreated, orderId } = await createPaypalOrder(
+        calculateTotalPrice(items, state)
+      );
 
-      return;
-      res.json({
-        status: 'Narudžba kreirana, čekanje plaćanja',
-      });
+      if (paypalOrderCreated && orderId) {
+        res.json({
+          paypalPending: 'Narudžba kreirana, čekanje plaćanja',
+          orderId: orderId,
+        });
 
-      res.json({
-        error: 'Plaćanje nije uspjelo, molimo pokušajte ponovo',
-      });
+        const newOrder = new Order({
+          name,
+          mobileNumber,
+          state,
+          city,
+          address,
+          shipping,
+          total: calculateTotalPrice(items, state),
+          items,
+          email,
+          status: 'payinCreated',
+          paypalOrderId: orderId,
+        });
+
+        await newOrder.save();
+        return;
+      } else {
+        return res.json({
+          error: 'Plaćanje nije uspjelo, molimo pokušajte ponovo',
+        });
+      }
     }
 
     const newOrder = new Order({
@@ -139,6 +164,88 @@ export const createOrder = async (req: Request, res: Response) => {
     );
   } catch (error) {
     console.log('Error creating new order', error);
+    res.status(500).json({ error });
+  }
+};
+
+export const completePaypalOrder = async (req: Request, res: Response) => {
+  const { orderId } = req.body;
+  const accessToken = await generatePaypalAccessToken();
+
+  try {
+    const response = await fetch(
+      `${process.env.PAYPAL_BASE_URL}/v2/checkout/orders/${orderId}/capture`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    let status = await response.json();
+
+    if (status.status === 'COMPLETED') {
+      const order = await Order.findOne({ paypalOrderId: orderId });
+
+      if (order) {
+        order.status = 'paid';
+        order.payer = status.payer;
+
+        await order.save();
+
+        res.json({
+          success: 'Narudžba je uspješno kreirana',
+        });
+
+        sendConfirmationMailPaypal(
+          order.email,
+          order.items,
+          order.name,
+          order.mobileNumber,
+          order.state,
+          order.city,
+          order.address
+        );
+
+        sendConfirmationMailToEmployee(
+          'isprintajsvojtvit@gmail.com',
+          order.items,
+          order.name,
+          order.mobileNumber,
+          order.state,
+          order.city,
+          order.address
+        );
+      }
+    } else {
+      res.json({
+        error: 'Plaćanje nije uspješno, pokušaj ponovo',
+      });
+      console.log('Completing order error: ', orderId, 'status:', status);
+    }
+  } catch (error) {
+    console.log('Erorr completing paypal order', error.code);
+    return { error: true };
+  }
+};
+
+export const cancelPaypalOrder = async (req: Request, res: Response) => {
+  const { paypalOrderId } = req.body;
+
+  try {
+    const result = await Order.deleteOne({ paypalOrderId: paypalOrderId });
+
+    if (result.deletedCount === 1) {
+      res.json({
+        success: `Obrisana paypal narudžba sa IDom: ${paypalOrderId}`,
+      });
+    } else {
+      res.status(404).json({ error: 'Narudžba sa tim IDom nije pronađena' });
+    }
+  } catch (error) {
+    console.log('Erorr canceling paypal order', error.code);
     res.status(500).json({ error });
   }
 };
