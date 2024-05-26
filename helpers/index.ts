@@ -10,7 +10,7 @@ import {
 
 export const generateProductPrice = (product: Product) => {
   if (product === Product.SHIRT) {
-    return 25;
+    return 30;
   } else if (product === Product.MUG) {
     return 20;
   }
@@ -22,7 +22,7 @@ export const calculateTotalPrice = (items: any, state: string) => {
 
   items.forEach((item: { product: Product }) => {
     if (item.product === Product.MUG) total += 20;
-    else if (item.product === Product.SHIRT) total += 25;
+    else if (item.product === Product.SHIRT) total += 30;
   });
 
   return total + shipping;
