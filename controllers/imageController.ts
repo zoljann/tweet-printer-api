@@ -13,10 +13,7 @@ import {
 import { ITweetData } from '../interface';
 
 export const generateProductImagePreview = async (req: any, res: Response) => {
-  let retried = false;
-  const rettiwtApiKey = retried
-    ? process.env.TW_API_KEY_V2
-    : process.env.TW_API_KEY_V1;
+  const rettiwtApiKey = process.env.TW_API_KEY_V1;
   let rettiwt: any;
   try {
     rettiwt = new Rettiwt({
@@ -86,11 +83,6 @@ export const generateProductImagePreview = async (req: any, res: Response) => {
   } catch (error: any) {
     console.log('Error fetching tweet details:', error?.data || error);
 
-    if (!retried) {
-      retried = true;
-      return generateProductImagePreview(req, res);
-    } else {
-      res.status(500).json({ error });
-    }
+    res.status(500).json({ error });
   }
 };

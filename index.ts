@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import { connect } from 'mongoose';
 import imageRoute from './routes/imageRoute';
 import orderRoute from './routes/orderRoute';
+import productRoute from './routes/productRoute';
 
 dotenv.config();
 const app: Express = express();
@@ -18,6 +19,7 @@ app.use(express.json());
 
 app.use('/order', orderRoute);
 app.use('/image', imageRoute);
+app.use('/product', productRoute);
 
 connect(mongoDbURI)
   .then(() => {

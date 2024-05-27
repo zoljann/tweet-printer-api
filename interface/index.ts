@@ -29,6 +29,11 @@ export interface IOrder {
   items: [];
 }
 
+export interface IImage {
+  image: string;
+  tweetUrl: string;
+}
+
 export interface ITweetData {
   username: string;
   fullName: string;
