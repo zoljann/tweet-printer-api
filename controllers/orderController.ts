@@ -33,9 +33,24 @@ const Order = model<IOrder>('Order', orderSchema);
 
 export const getAllOrders = async (req: Request, res: Response) => {
   try {
-    const orders = await Order.find();
+    const page = parseInt(req.query.page as string, 10) || 1;
+    const pageSize = 10;
+    const offset = (page - 1) * pageSize;
 
-    res.json(orders.reverse());
+    const orders = await Order.find()
+      .sort({ createdAt: -1 })
+      .skip(offset)
+      .limit(pageSize);
+
+    const totalOrders = await Order.countDocuments();
+    const totalPages = Math.ceil(totalOrders / pageSize);
+
+    res.json({
+      orders,
+      currentPage: page,
+      totalPages,
+      totalOrders,
+    });
   } catch (error) {
     console.log('Failed to get orders', error);
     res.status(500).json({ error: 'Neuspješno dohvaćanje narudžbi' });

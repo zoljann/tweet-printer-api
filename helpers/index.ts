@@ -324,9 +324,7 @@ export const sendConfirmationMail = async (
         <span style="color: tomato"><strong>${calculateTotalPrice(
           items,
           state
-        )}KM / ${
-      calculateTotalPrice(items, state) * 0.52
-    }€</strong></span></span
+        )}KM</strong></span></span
       >
       <p>Adresa na koju šaljemo:</p>
       <ul>
