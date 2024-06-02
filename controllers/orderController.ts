@@ -35,11 +35,11 @@ export const getAllOrders = async (req: Request, res: Response) => {
   try {
     const page = parseInt(req.query.page as string, 10) || 1;
     const pageSize = 10;
-    const offset = (page - 1) * pageSize;
+    const skip = (page - 1) * pageSize;
 
     const orders = await Order.find()
       .sort({ createdAt: -1 })
-      .skip(offset)
+      .skip(skip)
       .limit(pageSize);
 
     const totalOrders = await Order.countDocuments();
@@ -60,7 +60,7 @@ export const getAllOrders = async (req: Request, res: Response) => {
 export const updateStatusByOrderId = async (req: Request, res: Response) => {
   const { orderId, status } = req.body;
 
-  if (!['payinCreated', 'ordered', 'paid', 'done'].includes(status)) {
+  if (!['ordered', 'paid', 'done', 'cancelled', 'sent'].includes(status)) {
     return res.json({
       error: 'Status nije validan',
     });
@@ -76,7 +76,7 @@ export const updateStatusByOrderId = async (req: Request, res: Response) => {
     await order.save();
 
     res.json({
-      success: `Izmjenjen status narudžbe ID: ${orderId}`,
+      success: `Izmjenjen status narudžbe osobe: ${order.name}`,
     });
   } catch (error) {
     console.log('Failed to update order', error);
