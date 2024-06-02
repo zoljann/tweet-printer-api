@@ -61,7 +61,11 @@ export const getAllOrders = async (req: Request, res: Response) => {
 export const updateOrderById = async (req: Request, res: Response) => {
   const { orderId, status, note } = req.body;
 
-  if (!['ordered', 'paid', 'done', 'cancelled', 'sent'].includes(status)) {
+  if (
+    !['ordered', 'paid', 'done', 'cancelled', 'sent', 'payinCreated'].includes(
+      status
+    )
+  ) {
     return res.json({
       error: 'Status nije validan',
     });
