@@ -24,6 +24,7 @@ const orderSchema = new Schema<IOrder>(
     email: { type: String, required: true },
     total: { type: Number, required: true },
     createdAt: { type: Date, default: Date.now },
+    note: { type: String, required: false },
     items: [],
   },
   { versionKey: false }
@@ -57,8 +58,8 @@ export const getAllOrders = async (req: Request, res: Response) => {
   }
 };
 
-export const updateStatusByOrderId = async (req: Request, res: Response) => {
-  const { orderId, status } = req.body;
+export const updateOrderById = async (req: Request, res: Response) => {
+  const { orderId, status, note } = req.body;
 
   if (!['ordered', 'paid', 'done', 'cancelled', 'sent'].includes(status)) {
     return res.json({
@@ -71,12 +72,16 @@ export const updateStatusByOrderId = async (req: Request, res: Response) => {
 
     if (order) {
       order.status = status;
+
+      if (note) {
+        order.note = note;
+      }
     }
 
     await order.save();
 
     res.json({
-      success: `Izmjenjen status narudžbe osobe: ${order.name}`,
+      success: `Izmjenjena narudžba, osoba: ${order.name}`,
     });
   } catch (error) {
     console.log('Failed to update order', error);

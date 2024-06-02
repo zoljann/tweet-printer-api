@@ -26,6 +26,7 @@ export interface IOrder {
   email: string;
   total: number;
   createdAt: any;
+  note: string;
   items: [];
 }
 
