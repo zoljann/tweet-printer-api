@@ -21,7 +21,9 @@
     "node-html-to-image": "^4.0.0",
     "nodemailer": "^6.9.13",
     "nodemon": "^3.1.0",
-    "rettiwt-api": "^2.6.2"
+    "rettiwt-api": "^2.6.2",
+    "swagger-ui-express": "^5.0.1",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
